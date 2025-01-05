@@ -13,10 +13,32 @@ function addTodoToLocalStorage(todoText) {
 
 function appendTodoInHTML(todotext) {
   const todoList = document.getElementById("todolist");
-  const todo = document.createElement("li");
+  const todoItem = document.createElement("li");
 
-  todo.textContent = todotext;
-  todoList.appendChild(todo);
+  todoItem.textContent = todotext;
+  todoItem.classList.add("todoItem");
+
+  //creating edit button
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.classList.add("editBtn");
+
+  //creating delete button
+  const DeleteBtn = document.createElement("button");
+  DeleteBtn.textContent = "Delete";
+  DeleteBtn.classList.add("DeleteBtn");
+
+  //Creating completed button
+  const completedBtn = document.createElement("button");
+  completedBtn.textContent = "Completed";
+  completedBtn.classList.add("completedBtn");
+
+  //Appending todo and buttons to todoItem
+  todoItem.appendChild(editBtn);
+  todoItem.appendChild(DeleteBtn);
+  todoItem.appendChild(completedBtn);
+
+  todoList.appendChild(todoItem);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
