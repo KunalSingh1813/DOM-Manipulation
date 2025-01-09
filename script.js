@@ -7,13 +7,14 @@ function LoadTodos() {
 
 function addTodoToLocalStorage(todo) {
   const todos = LoadTodos();
-  todos.todoList.push(todo);
+  todos.todoList.push({ ...todo, id: todos.todoList.length });
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 
 function appendTodoInHTML(todo) {
   const todoList = document.getElementById("todolist");
   const todoItem = document.createElement("li");
+  todoItem.setAttribute("data-id", todo.id);
   const textDiv = document.createElement("div");
 
   textDiv.textContent = todo.text;
@@ -78,6 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const todoList = document.getElementById("todolist");
 
+  const todos = LoadTodos();
+
   const filterBtns = document.getElementsByClassName("filterBtn");
 
   ///filter buttons functionality
@@ -90,13 +93,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (todoText == "") {
       alert("Please write something for the todo");
     } else {
+      const id = todos.todoList.length;
       addTodoToLocalStorage({
         text: todoText,
         isCompleted: false,
+        id: id,
       });
       appendTodoInHTML({
         text: todoText,
         isCompleted: false,
+        id,
       });
       todoInput.value = "";
     }
@@ -108,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
     event.target.value = todoText.trim();
   });
 
-  const todos = LoadTodos();
   todos.todoList.forEach((todo) => {
     appendTodoInHTML(todo);
   });
