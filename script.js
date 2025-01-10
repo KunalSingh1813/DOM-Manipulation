@@ -5,6 +5,10 @@ function LoadTodos() {
   return todos;
 }
 
+function refreshTodos(todos) {
+  localStorage.setItem("todos", todos);
+}
+
 function addTodoToLocalStorage(todo) {
   const todos = LoadTodos();
   todos.todoList.push({ ...todo, id: todos.todoList.length });
@@ -16,6 +20,9 @@ function appendTodoInHTML(todo) {
   const todoItem = document.createElement("li");
   todoItem.setAttribute("data-id", todo.id);
   const textDiv = document.createElement("div");
+  if (todo.isCompleted) {
+    textDiv.classList.add("completed");
+  }
 
   textDiv.textContent = todo.text;
   todoItem.classList.add("todoItem");
@@ -37,7 +44,7 @@ function appendTodoInHTML(todo) {
   const completedBtn = document.createElement("button");
   completedBtn.textContent = "Completed";
   completedBtn.classList.add("completedBtn");
-
+  completedBtn.addEventListener("click", toggleTodo);
   //Appending todo and buttons to todoItem
   wrapperDiv.appendChild(editBtn);
   wrapperDiv.appendChild(DeleteBtn);
@@ -47,6 +54,20 @@ function appendTodoInHTML(todo) {
   todoList.appendChild(todoItem);
 }
 
+function toggleTodo(event) {
+  const todoItem = event.target.parentElement.parentElement;
+  const todoid = todoItem.getAttribute("data-id");
+  const todos = LoadTodos();
+  todos.todoList.forEach((todo) => {
+    todo.isCompleted = !todo.isCompleted;
+  });
+  refreshTodos(todos);
+  const todoList = document.getElementById("todoList");
+  todoList.innerHTML = "";
+  todos.todoList.forEach((todo) => {
+    appendTodoInHTML(todo);
+  });
+}
 function executeFilterAction(event) {
   const element = event.target;
   const value = element.getAttribute("data-filter");
@@ -79,9 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const todoList = document.getElementById("todolist");
 
-  const todos = LoadTodos();
+  let todos = LoadTodos();
 
   const filterBtns = document.getElementsByClassName("filterBtn");
+  console.log(filterBtns);
 
   ///filter buttons functionality
   for (const btn of filterBtns) {
@@ -93,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (todoText == "") {
       alert("Please write something for the todo");
     } else {
+      todos = LoadTodos();
       const id = todos.todoList.length;
       addTodoToLocalStorage({
         text: todoText,
