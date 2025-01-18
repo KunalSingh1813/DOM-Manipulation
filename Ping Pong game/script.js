@@ -22,16 +22,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // if (ballX > 680 || ballX <= 0) dx *= -1;
     // if (ballY > 380 || ballY <= 0) dy *= -1;
+    /**
+     * ballX < paddle.offsetLeft + paddle.offsetWidth -> if left(wrt table) of the paddle  < right(wrt table) of the paddle
+     * ballY > paddle.offsetTop -> If top(wrt table) of ball > top (wrt table) of paddle
+     * ballY + ball.offsetHeight < paddle.offsetTop + paddle.offsetHeight ->
+     * ballY + ball.offsetHeight -> bottom of ball
+     * paddle.offsetTop + paddle.offsetHeight ->bottom of paddle
+     */
+    if (
+      ballX < paddle.offsetLeft + paddle.offsetWidth &&
+      ballY > paddle.offsetTop &&
+      ballY + ball.offsetHeight < paddle.offsetTop + paddle.offsetHeight
+    ) {
+      dx *= -1;
+    }
+
     if (ballX > table.offsetWidth - ball.offsetWidth || ballX <= 0) dx *= -1; //change X direction
     if (ballY > table.offsetHeight - ball.offsetHeight || ballY <= 0) dy *= -1;
   }, 1);
 
   let paddleY = 0;
-  let dPY = 5; //displacement for paddle in Y direction
+  let dPY = 20; //displacement for paddle in Y direction
 
   document.addEventListener("keydown", (event) => {
+    event.preventDefault(); //preventsdefault scrolling behaviour of up and down keys
     if (event.keyCode == 38 && paddleY > 0) {
       //up arrow key is pressed
+
       paddleY += -1 * dPY;
     } else if (
       event.keyCode == 40 &&
@@ -40,6 +57,19 @@ document.addEventListener("DOMContentLoaded", () => {
       //down arrow
       paddleY += dPY;
     }
+    paddle.style.top = `${paddleY}px`;
+  });
+
+  document.addEventListener("mousemove", (event) => {
+    let mouseDistanceFromTop = event.clientY; //this is the distance of the mouse point from the top of the screen
+    let distanceOfTableFromTopofScreen = table.offsetTop;
+    let mousePointControl =
+      mouseDistanceFromTop -
+      distanceOfTableFromTopofScreen -
+      paddle.offsetHeight / 2;
+    paddleY = mousePointControl;
+    if (paddleY <= 0 || paddleY > table.offsetHeight - paddle.offsetHeight)
+      return; //if bottom of the paddle touches bottom if the table
     paddle.style.top = `${paddleY}px`;
   });
 });
